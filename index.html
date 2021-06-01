@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+ <meta charset='utf-8' />
+ <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+ <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+ <link rel="stylesheet" type="text/css" href="cycle_style.css">
+ <style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+</style>
+ <title> Melbourne Cycling Map </title>
+</head>
+
+
+
+
+<body>
+
+<nav id="menu"></nav>
+<div id="map"></div>
+<div>
+<div class='map-overlay' id='title'>
+  <h1>Melbourne's Bicycle Route Network</h1>
+  <p>Explore Melbourne's major cycling routes and find your next ride! <br><br>
+  This map uses entirely open-source data derived from <a href='https://www.openstreetmap.org/' target= '_blank'> OpenStreetMap</a> to show cycling routes, bicycle shops and more. Super Sunday bicycle user count was conducted by <a href= 'https://www.bicyclenetwork.com.au/our-services/counts/super-sunday/' target= '_blank'> Bicycle Network</a> in 2017. </p>
+  </div>
+</div>
+
+<script>
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiYW1pdGF5bW9vZHkiLCJhIjoiY2tkNDA1bXg4MGE0OTJ4b2R4dDJwZnp3NyJ9.kONzRR-vdVUKuSoSqc_rBw';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/amitaymoody/ckd52npxe06501jr2t7d20fir',
+});
+
+//Load map
+map.on('load', function() {
+
+
+  map.addLayer({
+    'id': 'On-Street',
+    'type': 'line',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.77p9jbek'
+    },
+    'source-layer': 'route_on_street-dfkutx',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+      'line-color': '#FF3131',
+      'line-width': 2
+    }
+  })
+  map.addLayer({
+    'id': 'Off-Street',
+    'type': 'line',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.4kob8myi'
+    },
+    'source-layer': 'route_off_street-8z3zhz',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+      'line-color': '#15f4ee',
+      'line-width': 2
+    }
+  })
+
+  map.addLayer({
+    'id': 'Entire Network',
+    'type': 'line',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.d9x83lys'
+    },
+    'source-layer': 'entire_route-0n86t6',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+      'line-color': '#99FFCC',
+      'line-width': 2
+    }
+  })
+  
+map.addLayer({
+    'id': 'Bicycle Parking',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.cnon3avr'
+    },
+    'source-layer': 'parking-2fkfx1',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+
+      'circle-color': '#a4fc82',
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#484744',
+      'circle-opacity': 0.5,
+    }
+  });
+
+  map.addLayer({
+    'id': 'Bicycle Shops',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.a0xvk5e9'
+    },
+    'source-layer': 'bikeshops-dwyohd',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+
+      'circle-color': '#ff8383',
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#484744'
+    }
+  });
+  map.addLayer({
+    'id': 'Repair Stations',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.4t49jh45'
+    },
+    'source-layer': 'repair_station-bgd4kt',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+
+      'circle-color': '#7D6FFF',
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#484744',
+    }
+  });
+
+  //Add count layer
+  map.addLayer({
+    'id': 'Super Sunday Count',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://amitaymoody.8mr7swzg'
+    },
+    'source-layer': 'counts-8vk0rx',
+    'layout': {
+      'visibility': 'visible'
+    },
+    paint: {
+      'circle-color': '#ffaf5e',
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#484744',
+      'circle-opacity': 0.8,
+      'circle-radius': {
+        property: 'total',
+        stops: [
+          [42, 2],
+          [400, 6],
+          [1000, 10],
+          [1500, 20]
+        ]
+      },
+    }
+  });
+});
+map.on('idle', function() {
+  // If these two layers have been added to the style,
+  // add the toggle buttons.
+  if (map.getLayer('Entire Network') && map.getLayer('On-Street') && map.getLayer('Off-Street') && map.getLayer('Super Sunday Count') && map.getLayer('Bicycle Shops') && map.getLayer('Repair Stations') && map.getLayer('Bicycle Parking')) {
+    // Enumerate ids of the layers.
+    var toggleableLayerIds = ['Entire Network', 'On-Street', 'Off-Street', 'Super Sunday Count', 'Bicycle Shops', 'Repair Stations', 'Bicycle Parking'];
+    // Set up the corresponding toggle button for each layer.
+    for (var i = 0; i < toggleableLayerIds.length; i++) {
+      var id = toggleableLayerIds[i];
+      if (!document.getElementById(id)) {
+        // Create a link.
+        var link = document.createElement('a');
+        link.id = id;
+        link.href = '#';
+        link.textContent = id;
+        link.className = 'active';
+        // Show or hide layer when the toggle is clicked.
+        link.onclick = function(e) {
+          var clickedLayer = this.textContent;
+          e.preventDefault();
+          e.stopPropagation();
+
+          var visibility = map.getLayoutProperty(
+            clickedLayer,
+            'visibility'
+          );
+
+          // Toggle layer visibility by changing the layout object's visibility property.
+          if (visibility === 'visible') {
+            map.setLayoutProperty(
+              clickedLayer,
+              'visibility',
+              'none'
+            );
+            this.className = '';
+          } else {
+            this.className = 'active';
+            map.setLayoutProperty(
+              clickedLayer,
+              'visibility',
+              'visible'
+            );
+          }
+        };
+
+        var layers = document.getElementById('menu');
+        layers.appendChild(link);
+      }
+    }
+  }
+});
+
+  map.on('click', 'Bicycle Shops', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML ("Bicycle Shop<br>" + e.features[0].properties.name)
+      .addTo(map);
+  });
+  
+  map.on('click', 'Super Sunday Count', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML ("Super Sunday Count<br>No. of Cyclists:" + "<br>" + e.features[0].properties.total)
+      .addTo(map);
+  });
+  
+    map.on('click', 'Bicycle Parking', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML ("Parking Space<br>Capacity:" + "<br>" + e.features[0].properties.capacity)
+      .addTo(map);
+  });
+  
+    map.on('mouseenter', 'Bicycle Shops', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a hand when it leaves
+  map.on('mouseleave', 'Bicycle Shops', function() {
+    map.getCanvas().style.cursor = '';
+
+});
+
+    map.on('mouseenter', 'Repair Stations', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a hand when it leaves
+  map.on('mouseleave', 'Repair Stations', function() {
+    map.getCanvas().style.cursor = '';
+
+});
+
+    map.on('mouseenter', 'Bicycle Parking', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a hand when it leaves
+  map.on('mouseleave', 'Bicycle Parking', function() {
+    map.getCanvas().style.cursor = '';
+
+});
+
+    map.on('mouseenter', 'Super Sunday Count', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to a hand when it leaves
+  map.on('mouseleave', 'Super Sunday Count', function() {
+    map.getCanvas().style.cursor = '';
+
+});
+
+</script>
+
+</body>
+
+</html>
