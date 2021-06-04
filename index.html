@@ -286,6 +286,35 @@ map.on('idle', function() {
     map.getCanvas().style.cursor = '';
 
 });
+   map.on('click', 'Super Sunday Count', function(e) {
+    map.flyTo({
+      center: e.features[0].geometry.coordinates,
+      speed: 0.2
+    });
+  });
+
+  map.on('click', 'Bicycle Shops', function(e) {
+    map.flyTo({
+      center: e.features[0].geometry.coordinates,
+      speed: 0.2
+    });
+  });
+  
+    map.on('click', 'Repair Stations', function(e) {
+    map.flyTo({
+      center: e.features[0].geometry.coordinates,
+      speed: 0.2
+    });
+  });
+  
+    map.on('click', 'Bicycle Parking', function(e) {
+    map.flyTo({
+      center: e.features[0].geometry.coordinates,
+      speed: 0.2
+    });
+  });
+  
+ 
 
 </script>
 
